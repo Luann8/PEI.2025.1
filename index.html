@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://raw.githubusercontent.com/Luann8/Gerenciamento-de-licencas-ambientais-online/main/logo.png?token=GHSAT0AAAAAACUU4U5CCV3P5OHR5CAAGHOMZVCRWJQ" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Gerenciamento de Licenças Ambientais</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body.dark-mode {
+            background-color: #1c2526;
+            color: #e0e0e0;
+        }
+
+        body.high-contrast {
+            background-color: #000;
+            color: #fff;
+        }
+
+        body.high-contrast .sidebar,
+        body.high-contrast .sidebar-toggle,
+        body.high-contrast .chat-container,
+        body.high-contrast .input-container,
+        body.high-contrast .intro-screen,
+        body.high-contrast .credits-screen,
+        body.high-contrast .tutorial-screen,
+        body.high-contrast .history-screen {
+            background-color: #000;
+            color: #fff;
+            border-color: #fff;
+        }
+
+        body.high-contrast .bot-message,
+        body.high-contrast .user-message,
+        body.high-contrast .status-indicator,
+        body.high-contrast .sidebar nav ul li a:hover,
+        body.high-contrast .sidebar nav ul li button:hover,
+        body.high-contrast .input-container button,
+        body.high-contrast .intro-screen button,
+        body.high-contrast .credits-screen button,
+        body.high-contrast .tutorial-screen .back-button,
+        body.high-contrast .history-screen button {
+            background-color: #fff;
+            color: #000;
+        }
+
+        body.high-contrast .tutorial-step {
+            background-color: #222;
+        }
+
+        body.high-contrast a {
+            color: #0ff;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2a9d8f;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: transform 0.3s ease;
+            position: fixed;
+            height: 100%;
+            z-index: 1000;
+        }
+
+        body.dark-mode .sidebar {
+            background-color: #1a3c34;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-250px);
+        }
+
+        .sidebar .logo h1 {
+            font-size: 1.6em;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            flex: 1;
+        }
+
+        .sidebar nav ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar nav ul li a, .sidebar nav ul li button {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            min-height: 48px;
+        }
+
+        .sidebar nav ul li a:hover, .sidebar nav ul li button:hover {
+            background-color: #264653;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            background: #2a9d8f;
+            border: none;
+            color: white;
+            font-size: 1.8em;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1100;
+            display: none;
+            min-width: 48px;
+            min-height: 48px;
+        }
+
+        body.dark-mode .sidebar-toggle {
+            background: #1a3c34;
+            color: #e0e0e0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.full {
+            margin-left: 0;
+        }
+
+        .intro-screen, .credits-screen, .tutorial-screen, .history-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+            overflow-y: auto;
+            transition: opacity 0.5s ease;
+        }
+
+        body.dark-mode .intro-screen, body.dark-mode .credits-screen, body.dark-mode .tutorial-screen, body.dark-mode .history-screen {
+            background-color: #2a2a2a;
+        }
+
+        .intro-screen.hidden, .credits-screen.hidden, .tutorial-screen.hidden, .history-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .intro-screen h1, .credits-screen h1, .tutorial-screen h1, .history-screen h1 {
+            font-size: 2em;
+            color: #2a9d8f;
+            margin-bottom: 20px;
+        }
+
+        body.high-contrast .intro-screen h1, body.high-contrast .credits-screen h1, body.high-contrast .tutorial-screen h1, body.high-contrast .history-screen h1 {
+            color: #fff;
+        }
+
+        .intro-screen p, .credits-screen p, .history-screen p {
+            font-size: 1.2em;
+            max-width: 600px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .intro-screen button, .credits-screen button, .tutorial-screen .back-button, .history-screen button {
+            padding: 12px 24px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            min-height: 48px;
+        }
+
+        .intro-screen button:hover, .credits-screen button:hover, .tutorial-screen .back-button:hover, .history-screen button:hover {
+            background-color: #264653;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            margin: 15px 15px 15px 15px; /* Adjusted margin for consistent spacing */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .chat-container {
+            background-color: #2a2a2a;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .message {
+            margin: 15px 0;
+            padding: 12px 18px;
+            border-radius: 10px;
+            max-width: 70%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .bot-message {
+            background-color: #e9c46a;
+            color: #333;
+            align-self: flex-start;
+        }
+
+        body.dark-mode .bot-message {
+            background-color: #a68a64;
+            color: #e0e0e0;
+        }
+
+        .user-message {
+            background-color: #2a9d8f;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        body.dark-mode .user-message {
+            background-color: #1a3c34;
+        }
+
+        .message .timestamp {
+            font-size: 0.7em;
+            color: #777;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .message .edit-button {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 10px;
+            display: none;
+            min-height: 48px;
+        }
+
+        .user-message:hover .edit-button {
+            display: inline;
+        }
+
+        .status-indicator {
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 10px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .status-urgent {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .status-warning {
+            background-color: #f4a261;
+            color: white;
+        }
+
+        .status-normal {
+            background-color: #2a9d8f;
+            color: white;
+        }
+
+        .typing-animation {
+            display: flex;
+            gap: 5px;
+            padding: 12px 18px;
+            align-self: flex-start;
+        }
+
+        .typing-animation span {
+            width: 8px;
+            height: 8px;
+            background-color: #2a9d8f;
+            border-radius: 50%;
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        body.dark-mode .typing-animation span {
+            background-color: #e0e0e0;
+        }
+
+        .typing-animation span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-animation span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .input-container {
+            padding: 20px;
+            background-color: #ffffff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .input [class*="container"] {
+            background-color: #2a2a2a;
+            border-top-color: #444;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 1.1em;
+            min-height: 48px;
+        }
+
+        body.dark-mode .input-container input {
+            background-color: #333;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .input-container input:focus {
+            border-color: #2a9d8f;
+            outline: none;
+        }
+
+        .input-container button {
+            padding: 12px 24px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            min-height: 48px;
+        }
+
+        body.dark-mode .input-container button {
+            background-color: #1a3c34;
+        }
+
+        .input-container button:hover {
+            background-color: #264653;
+        }
+
+        .tutorial-screen .container, .history-screen .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .tutorial-screen header, .history-screen header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-step, .history-item {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f0f4f8;
+            border-radius: 8px;
+        }
+
+        body.dark-mode .tutorial-step, body.dark-mode .history-item {
+            background-color: #333;
+        }
+
+        .tutorial-step h2, .history-item h2 {
+            font-size: 1.5em;
+            color: #2a9d8f;
+            margin-bottom: 10px;
+        }
+
+        .tutorial-step p, .history-item p {
+            margin-bottom: 10px;
+        }
+
+        .toggle-section {
+            cursor: pointer;
+            color: #2a9d8f;
+            font-weight: bold;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 48px;
+        }
+
+        .toggle-content {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .toggle-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-250px);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .chat-container {
+                margin: 10px;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .intro-screen h1, .credits-screen h1, .tutorial-screen h1, .history-screen h1 {
+                font-size: 1.6em;
+            }
+
+            .intro-screen p, .credits-screen p, .tutorial-step p, .history-item p {
+                font-size: 1em;
+            }
+
+            .tutorial-screen .container, .history-screen .container {
+                padding: 15px;
+            }
+
+            .tutorial-step h2, .history-item h2 {
+                font-size: 1.3em;
+            }
+
+            .input-container {
+                flex-direction: column;
+            }
+
+            .input-container input, .input-container button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .sidebar.hidden {
+                transform: translateX(-200px);
+            }
+
+            .sidebar .logo h1 {
+                font-size: 1.4em;
+            }
+
+            .sidebar nav ul li a, .sidebar nav ul li button {
+                font-size: 1em;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Abrir/fechar menu lateral">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h1>Licenças Ambientais</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="clearChat()" aria-label="Limpar histórico do chat"><i class="fas fa-trash"></i> Limpar Chat</a></li>
+                <li><a href="#" onclick="exportFormData()" id="exportButton" style="display: none;" aria-label="Exportar dados da licença"><i class="fas fa-download"></i> Exportar Dados</a></li>
+                <li><a href="#" onclick="showTutorial()" aria-label="Ver tutorial"><i class="fas fa-book"></i> Tutorial</a></li>
+                <li><button onclick="toggleDarkMode()" aria-label="Alternar modo escuro"><i class="fas fa-moon"></i> Modo Escuro</button></li>
+                <li><a href="#" onclick="showCredits()" aria-label="Ver créditos"><i class="fas fa-info-circle"></i> Créditos</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="intro-screen" id="introScreen" role="dialog" aria-labelledby="introTitle">
+            <h1 id="introTitle">Bem-vindo ao Gerenciamento de Licenças</h1>
+            <p>Registre e acompanhe licenças ambientais de forma simples e interativa. Comece agora!</p>
+            <button onclick="enterChat()" aria-label="Entrar no chat">Iniciar Chat</button>
+        </div>
+
+        <div class="credits-screen hidden" id="creditsScreen" role="dialog" aria-labelledby="creditsTitle">
+            <h1 id="creditsTitle">Créditos</h1>
+            <p>Desenvolvido por:<br>
+               <a href="https://luann8.github.io/Links-Personal/" style="color: #e9c46a;">Luann Pereira Mendes</a><br>
+               <a href="https://linktr.ee/Kayostavares" style="color: #e9c46a;">Kayo Tavares</a></p>
+            <p>Local: Brasil - Vassouras - RJ</p>
+            <button onclick="backToIntro()" aria-label="Voltar para a tela inicial">Voltar</button>
+        </div>
+
+        <div class="tutorial-screen hidden" id="tutorialScreen" role="dialog" aria-labelledby="tutorialTitle">
+            <div class="container">
+                <header>
+                    <h1 id="tutorialTitle">Tutorial: Gerenciamento de Licenças Ambientais</h1>
+                    <button class="back-button" onclick="backToMain()" aria-label="Voltar para o aplicativo"><i class="fas fa-arrow-left"></i> Voltar</button>
+                </header>
+
+                <section class="tutorial-step">
+                    <h2>1. Iniciar o Chat</h2>
+                    <p>Na tela inicial, clique no botão "Iniciar Chat" para começar a interagir com o sistema.</p>
+                </section>
+
+                <section class="tutorial-step">
+                    <h2>2. Registrar uma Licença</h2>
+                    <p>Digite "iniciar" no campo de entrada para começar o processo de registro. O sistema irá solicitar:</p>
+                    <ul>
+                        <li>E-mail</li>
+                        <li>Número da licença</li>
+                        <li>Nome da licença</li>
+                        <li>Nome do cliente</li>
+                        <li>Local da licença</li>
+                        <li>Data de "Protocolar até" (YYYY-MM-DD)</li>
+                        <li>Data de vencimento (YYYY-MM-DD)</li>
+                    </ul>
+                </section>
+
+                <section class="tutorial-step">
+                    <h2>3. Adicionar ao Google Calendar</h2>
+                    <p>Após registrar a licença, você receberá um link para adicionar um lembrete ao Google Calendar. Clique no link para abrir o calendário.</p>
+                </section>
+
+                <section class="tutorial-step">
+                    <h2>4. Exportar Dados</h2>
+                    <p>Depois de registrar uma licença, clique em "Exportar Dados" no menu lateral para baixar os dados como um arquivo JSON.</p>
+                </section>
+
+                <section class="tutorial-step">
+                    <h2>5. Outras Funcionalidades</h2>
+                    <p>Explore outras opções no menu lateral:</p>
+                    <ul>
+                        <li><strong>Limpar Chat:</strong> Apaga o histórico do chat.</li>
+                        <li><strong>Modo Escuro:</strong> Alterna entre temas claro e escuro.</li>
+                        <li><strong>Créditos:</strong> Veja informações sobre os desenvolvedores.</li>
+                    </ul>
+                    <div class="toggle-section" onclick="toggleSection(this)">Mais detalhes <i class="fas fa-chevron-down"></i></div>
+                    <div class="toggle-content">
+                        <p>Você também pode editar mensagens enviadas clicando no ícone de lápis ao lado de suas mensagens.</p>
+                        <p>Use a barra lateral para navegar rapidamente entre as funcionalidades.</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="chat-container" id="chat" style="display: none;" role="log" aria-live="polite">
+            <div class="message bot-message">Olá! Bem-vindo ao Gerenciamento de Licenças Ambientais. Digite "iniciar" para registrar uma licença.<div class="timestamp"></div></div>
+        </div>
+
+        <div class="input-container" id="inputContainer" style="display: none;" role="form">
+            <input type="text" id="userInput" placeholder="Digite sua mensagem..." aria-label="Campo de entrada de mensagem">
+            <button onclick="sendMessage()" aria-label="Enviar mensagem">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        const introScreen = document.getElementById('introScreen');
+        const creditsScreen = document.getElementById('creditsScreen');
+        const tutorialScreen = document.getElementById('tutorialScreen');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const chat = document.getElementById('chat');
+        const inputContainer = document.getElementById('inputContainer');
+        const userInput = document.getElementById('userInput');
+        const exportButton = document.getElementById('exportButton');
+        let step = 0;
+        let formData = {};
+        let messages = [];
+
+        function formatTimestamp() {
+            const now = new Date();
+            return now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function saveMessages() {
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+        }
+
+        function loadMessages() {
+            const savedMessages = localStorage.getItem('chatMessages');
+            if (savedMessages) {
+                messages = JSON.parse(savedMessages);
+                chat.innerHTML = '';
+                messages.forEach(msg => {
+                    const message = document.createElement('div');
+                    message.classList.add('message', msg.isUser ? 'user-message' : 'bot-message');
+                    message.innerHTML = `${msg.text}<div class="timestamp">${msg.timestamp}</div>` +
+                        (msg.isUser ? `<button class="edit-button" onclick="editMessage(${msg.id})" aria-label="Editar mensagem"><i class="fas fa-edit"></i></button>` : '');
+                    chat.appendChild(message);
+                });
+                chat.scrollTop = chat.scrollHeight;
+            }
+        }
+
+        function addMessage(text, isUser = false) {
+            const messageId = messages.length;
+            const messageObj = { id: messageId, text, isUser, timestamp: formatTimestamp() };
+            messages.push(messageObj);
+            saveMessages();
+            const message = document.createElement('div');
+            message.classList.add('message', isUser ? 'user-message' : 'bot-message');
+            message.innerHTML = `${text}<div class="timestamp">${messageObj.timestamp}</div>` +
+                (isUser ? `<button class="edit-button" onclick="editMessage(${messageId})" aria-label="Editar mensagem"><i class="fas fa-edit"></i></button>` : '');
+            chat.appendChild(message);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function editMessage(id) {
+            const messageObj = messages.find(msg => msg.id === id);
+            if (messageObj && messageObj.isUser) {
+                const newText = prompt('Editar mensagem:', messageObj.text);
+                if (newText && newText.trim()) {
+                    messages[id].text = newText.trim();
+                    messages[id].timestamp = formatTimestamp();
+                    saveMessages();
+                    const messageElements = chat.querySelectorAll('.message');
+                    messageElements[id].innerHTML = `${newText}<div class="timestamp">${messages[id].timestamp}</div>` +
+                        `<button class="edit-button" onclick="editMessage(${id})" aria-label="Editar mensagem"><i class="fas fa-edit"></i></button>`;
+                }
+            }
+        }
+
+        function showTypingAnimation() {
+            const typing = document.createElement('div');
+            typing.classList.add('typing-animation');
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            typing.id = 'typingAnimation';
+            chat.appendChild(typing);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function hideTypingAnimation() {
+            const typing = document.getElementById('typingAnimation');
+            if (typing) typing.remove();
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@y]+$/;
+            return re.test(email);
+        }
+
+        function validateDate(dateStr) {
+            const re = /^\d{4}-\d{2}-\d{2}$/;
+            if (!re.test(dateStr)) return false;
+            const date = new Date(dateStr);
+            return date instanceof Date && !isNaN(date);
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('full');
+        }
+
+        function enterChat() {
+            introScreen.classList.add('hidden');
+            chat.style.display = 'block';
+            inputContainer.style.display = 'flex';
+            loadMessages();
+            userInput.focus();
+        }
+
+        function showCredits() {
+            introScreen.classList.add('hidden');
+            tutorialScreen.classList.add('hidden');
+            creditsScreen.classList.remove('hidden');
+        }
+
+        function showTutorial() {
+            introScreen.classList.add('hidden');
+            creditsScreen.classList.add('hidden');
+            chat.style.display = 'none';
+            inputContainer.style.display = 'none';
+            tutorialScreen.classList.remove('hidden');
+        }
+
+        function backToIntro() {
+            creditsScreen.classList.add('hidden');
+            tutorialScreen.classList.add('hidden');
+            introScreen.classList.remove('hidden');
+        }
+
+        function backToMain() {
+            tutorialScreen.classList.add('hidden');
+            if (chat.style.display === 'block') {
+                chat.style.display = 'block';
+                inputContainer.style.display = 'flex';
+            } else {
+                introScreen.classList.remove('hidden');
+            }
+        }
+
+        function clearChat() {
+            if (confirm('Tem certeza que deseja limpar o histórico do chat?')) {
+                messages = [{ id: 0, text: 'Chat limpo! Digite "iniciar" para começar a registrar uma licença.', isUser: false, timestamp: formatTimestamp() }];
+                saveMessages();
+                chat.innerHTML = `<div class="message bot-message">Chat limpo! Digite "iniciar" para começar a registrar uma licença.<div class="timestamp">${formatTimestamp()}</div></div>`;
+                step = 0;
+                formData = {};
+                exportButton.style.display = 'none';
+            }
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const toggleButton = document.querySelector('.sidebar button[aria-label="Alternar modo escuro"]');
+            toggleButton.innerHTML = document.body.classList.contains('dark-mode')
+                ? '<i class="fas fa-sun"></i> Modo Claro'
+                : '<i class="fas fa-moon"></i> Modo Escuro';
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        function exportFormData() {
+            if (Object.keys(formData).length === 0) {
+                alert('Nenhum dado para exportar.');
+                return;
+            }
+            const dataStr = JSON.stringify(formData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `licenca_${formData.numeroLicenca}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleSection(element) {
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+            element.querySelector('i').classList.toggle('fa-chevron-down');
+            element.querySelector('i').classList.toggle('fa-chevron-up');
+        }
+
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.querySelector('.sidebar button[aria-label="Alternar modo escuro"]').innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
+        }
+
+        async function sendMessage() {
+            const input = userInput.value.trim();
+            if (!input) return;
+
+            addMessage(input, true);
+            userInput.value = '';
+            showTypingAnimation();
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            if (step === 0 && input.toLowerCase() === 'iniciar') {
+                step = 1;
+                hideTypingAnimation();
+                addMessage('Ótimo! Qual é o seu e-mail?');
+            } else if (step === 1) {
+                if (!validateEmail(input)) {
+                    hideTypingAnimation();
+                    addMessage('Por favor, insira um e-mail válido (ex.: exemplo@dominio.com).');
+                    return;
+                }
+                formData.email = input;
+                step = 2;
+                hideTypingAnimation();
+                addMessage('Qual é o número da licença?');
+            } else if (step === 2) {
+                formData.numeroLicenca = input;
+                step = 3;
+                hideTypingAnimation();
+                addMessage('Qual é o nome da licença?');
+            } else if (step === 3) {
+                formData.nomeLicenca = input;
+                step = 4;
+                hideTypingAnimation();
+                addMessage('Qual é o nome do cliente?');
+            } else if (step === 4) {
+                formData.cliente = input;
+                step = 5;
+                hideTypingAnimation();
+                addMessage('Qual é o local da licença?');
+            } else if (step === 5) {
+                formData.local = input;
+                step = 6;
+                hideTypingAnimation();
+                addMessage('Qual é a data de "Protocolar até"? (Formato: YYYY-MM-DD, ex.: 2025-03-25)');
+            } else if (step === 6) {
+                if (!validateDate(input)) {
+                    hideTypingAnimation();
+                    addMessage('Por favor, insira uma data válida no formato YYYY-MM-DD (ex.: 2025-03-25).');
+                    return;
+                }
+                formData.protocolarAte = input;
+                step = 7;
+                hideTypingAnimation();
+                addMessage('Qual é a data de vencimento? (Formato: YYYY-MM-DD, ex.: 2025-04-01)');
+            } else if (step === 7) {
+                if (!validateDate(input)) {
+                    hideTypingAnimation();
+                    addMessage('Por favor, insira uma data válida no formato YYYY-MM-DD (ex.: 2025-04-01).');
+                    return;
+                }
+                formData.vencimento = input;
+                hideTypingAnimation();
+                processForm();
+            } else {
+                hideTypingAnimation();
+                addMessage('Desculpe, não entendi. Digite "iniciar" para começar o processo de registro de uma licença.');
+            }
+        }
+
+        function getStatusIndicator(daysDiff) {
+            if (daysDiff <= 7) {
+                return '<span class="status-indicator status-urgent">Urgente</span>';
+            } else if (daysDiff <= 30) {
+                return '<span class="status-indicator status-warning">Atenção</span>';
+            } else {
+                return '<span class="status-indicator status-normal">Normal</span>';
+            }
+        }
+
+        function processForm() {
+            const vencimento = new Date(formData.vencimento);
+            const currentDate = new Date();
+            const timeDiff = vencimento.getTime() - currentDate.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            addMessage(`Aviso: A data de vencimento está a ${daysDiff} dias. Status: ${getStatusIndicator(daysDiff)}`);
+
+            const protocolarAteDate = new Date(formData.protocolarAte);
+            const reminderDate = new Date(protocolarAteDate);
+            reminderDate.setDate(reminderDate.getDate() - 7);
+
+            const eventSummary = `Lembrete: Vencimento da Licença ${formData.nomeLicenca} (${formData.numeroLicenca}) para ${formData.cliente}`;
+            const eventDescription = `Nome da Licença: ${formData.nomeLicenca}\nNúmero da Licença: ${formData.numeroLicenca}\nCliente: ${formData.cliente}\nLocal: ${formData.local}\nProtocolar até: ${formData.protocolarAte}\nVencimento: ${formData.vencimento}`;
+
+            const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventSummary)}&details=${encodeURIComponent(eventDescription)}&dates=${reminderDate.toISOString().replace(/-|:|\.\d\d\d/g, '')}/${vencimento.toISOString().replace(/-|:|\.\d\d\d/g, '')}&ctz=America/Sao_Paulo&add=${formData.email}`;
+
+            addMessage('Dados registrados com sucesso! Clique no link para adicionar ao Google Calendar:');
+            addMessage(`<a href="${googleCalendarUrl}" target="_blank">${eventSummary}</a>`);
+            exportButton.style.display = 'block';
+            step = 0;
+        }
+
+        userInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') sendMessage();
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                if (!tutorialScreen.classList.contains('hidden')) {
+                    backToMain();
+                } else if (!creditsScreen.classList.contains('hidden')) {
+                    backToIntro();
+                } else if (!introScreen.classList.contains('hidden')) {
+                    showCredits();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
