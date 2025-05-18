@@ -13,7 +13,7 @@
             --primary-dark: #034e3a; /* Darker green for hover */
             --secondary: #d97706; /* Dark amber */
             --secondary-dark: #92400e; /* Darker amber */
-            --background-light: #1f2937; /* Dark slate */
+            --background-light: #f8fdff; /* Dark slate */
             --background-dark: #111827; /* Deeper slate */
             --text-light: #e5e7eb; /* Light gray */
             --text-dark: #d1d5db; /* Slightly darker gray */
@@ -106,8 +106,10 @@
             transform: translateX(0);
         }
 
-        .sidebarwaterfall: none;
+        .sidebarwaterfall:hover {
+            transform: translateX(0);
         }
+    
 
         .sidebar .logo h1 {
             font-size: 1.6rem;
@@ -625,6 +627,13 @@
             }
         }
 
+        h3{
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
         @media (max-width: 480px) {
             .sidebar {
                 width: 100%;
@@ -717,7 +726,8 @@
     <div class="main-content full" id="mainContent">
         <div class="intro-screen" id="introScreen" role="dialog" aria-labelledby="introTitle">
             <h1 id="introTitle"><i class="fas fa-leaf"></i> Gerenciamento de Licenças</h1>
-            <p>Registre e acompanhe licenças ambientais de forma simples, moderna e interativa. Comece agora!</p>
+            <h3>Registre e acompanhe licenças ambientais de forma simples, moderna e interativa. Comece agora!</h3>
+            <br>
             <button onclick="enterChat()" aria-label="Entrar no chat"><i class="fas fa-comment-alt"></i> Iniciar Chat</button>
         </div>
 
