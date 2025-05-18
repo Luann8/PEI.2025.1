@@ -5,8 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://raw.githubusercontent.com/Luann8/Gerenciamento-de-licencas-ambientais-online/main/logo.png?token=GHSAT0AAAAAACUU4U5CCV3P5OHR5CAAGHOMZVCRWJQ" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <title>Gerenciamento de Licenças Ambientais</title>
     <style>
+        :root {
+            --primary: #059669; /* Dark emerald green */
+            --primary-dark: #034e3a; /* Darker green for hover */
+            --secondary: #d97706; /* Dark amber */
+            --secondary-dark: #92400e; /* Darker amber */
+            --background-light: #1f2937; /* Dark slate */
+            --background-dark: #111827; /* Deeper slate */
+            --text-light: #e5e7eb; /* Light gray */
+            --text-dark: #d1d5db; /* Slightly darker gray */
+            --sidebar-light: #059669; /* Dark emerald for sidebar */
+            --sidebar-dark: #111827; /* Deep slate for dark mode */
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,23 +31,22 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f4f8;
-            color: #333;
-            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--background-light), #374151);
+            color: var(--text-light);
+            min-height: 100vh;
             display: flex;
-            overflow: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: var(--transition);
             -webkit-tap-highlight-color: transparent;
         }
 
         body.dark-mode {
-            background-color: #1c2526;
-            color: #e0e0e0;
+            background: linear-gradient(135deg, var(--background-dark), #1f2937);
+            color: var(--text-dark);
         }
 
         body.high-contrast {
-            background-color: #000;
+            background: #000;
             color: #fff;
         }
 
@@ -40,9 +56,8 @@
         body.high-contrast .input-container,
         body.high-contrast .intro-screen,
         body.high-contrast .credits-screen,
-        body.high-contrast .tutorial-screen,
-        body.high-contrast .history-screen {
-            background-color: #000;
+        body.high-contrast .tutorial-screen {
+            background: #000;
             color: #fff;
             border-color: #fff;
         }
@@ -55,14 +70,9 @@
         body.high-contrast .input-container button,
         body.high-contrast .intro-screen button,
         body.high-contrast .credits-screen button,
-        body.high-contrast .tutorial-screen .back-button,
-        body.high-contrast .history-screen button {
-            background-color: #fff;
+        body.high-contrast .tutorial-screen .nav-button {
+            background: #fff;
             color: #000;
-        }
-
-        body.high-contrast .tutorial-step {
-            background-color: #222;
         }
 
         body.high-contrast a {
@@ -70,31 +80,41 @@
         }
 
         .sidebar {
-            width: 250px;
-            background-color: #2a9d8f;
-            color: white;
-            padding: 20px;
+            width: 260px;
+            background: var(--sidebar-light);
+            color: #fff;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 1rem;
             transition: transform 0.3s ease;
             position: fixed;
             height: 100%;
             z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
         }
 
         body.dark-mode .sidebar {
-            background-color: #1a3c34;
+            background: var(--sidebar-dark);
         }
 
         .sidebar.hidden {
-            transform: translateX(-250px);
+            transform: translateX(-260px);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebarwaterfall: none;
         }
 
         .sidebar .logo h1 {
-            font-size: 1.6em;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 700;
             text-align: center;
+            margin-bottom: 1rem;
+            color: #fff;
         }
 
         .sidebar nav ul {
@@ -103,54 +123,68 @@
         }
 
         .sidebar nav ul li {
-            margin: 15px 0;
+            margin: 0.75rem 0;
         }
 
-        .sidebar nav ul li a, .sidebar nav ul li button {
-            color: white;
+        .sidebar nav ul li a,
+        .sidebar nav ul li button {
+            color: #fff;
             text-decoration: none;
-            font-size: 1.2em;
-            padding: 12px 15px;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-radius: 8px;
+            gap: 0.5rem;
+            border-radius: var(--border-radius);
             background: none;
             border: none;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: var(--transition);
             min-height: 48px;
         }
 
-        .sidebar nav ul li a:hover, .sidebar nav ul li button:hover {
-            background-color: #264653;
+        .sidebar nav ul li a:hover,
+        .sidebar nav ul li button:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateX(5px);
         }
 
         .sidebar-toggle {
             position: fixed;
-            bottom: 15px;
-            left: 15px;
-            background: #2a9d8f;
-            border: none;
-            color: white;
-            font-size: 1.8em;
-            padding: 12px;
-            border-radius: 50%;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-dark);
+            border: 2px solid var(--primary);
+            color: #fff;
+            font-size: 1.25rem;
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
             cursor: pointer;
             z-index: 1100;
-            display: none;
             min-width: 48px;
             min-height: 48px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle.active .fa-bars::before {
+            content: "\f00d"; /* Change to X icon when active */
         }
 
         body.dark-mode .sidebar-toggle {
-            background: #1a3c34;
-            color: #e0e0e0;
+            background: var(--primary-dark);
+            border-color: var(--primary);
         }
 
         .main-content {
             flex: 1;
-            margin-left: 250px;
+            margin-left: 260px;
             display: flex;
             flex-direction: column;
             transition: margin-left 0.3s ease;
@@ -160,121 +194,149 @@
             margin-left: 0;
         }
 
-        .intro-screen, .credits-screen, .tutorial-screen, .history-screen {
+        .intro-screen,
+        .credits-screen,
+        .tutorial-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ffffff;
+            background: var(--background-light);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 2rem;
             z-index: 10;
             overflow-y: auto;
             transition: opacity 0.5s ease;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
         }
 
-        body.dark-mode .intro-screen, body.dark-mode .credits-screen, body.dark-mode .tutorial-screen, body.dark-mode .history-screen {
-            background-color: #2a2a2a;
+        body.dark-mode .intro-screen,
+        body.dark-mode .credits-screen,
+        body.dark-mode .tutorial-screen {
+            background: var(--background-dark);
         }
 
-        .intro-screen.hidden, .credits-screen.hidden, .tutorial-screen.hidden, .history-screen.hidden {
+        .intro-screen.hidden,
+        .credits-screen.hidden,
+        .tutorial-screen.hidden {
             opacity: 0;
             pointer-events: none;
         }
 
-        .intro-screen h1, .credits-screen h1, .tutorial-screen h1, .history-screen h1 {
-            font-size: 2em;
-            color: #2a9d8f;
-            margin-bottom: 20px;
+        .intro-screen h1,
+        .credits-screen h1,
+        .tutorial-screen h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
         }
 
-        body.high-contrast .intro-screen h1, body.high-contrast .credits-screen h1, body.high-contrast .tutorial-screen h1, body.high-contrast .history-screen h1 {
+        body.high-contrast .intro-screen h1,
+        body.high-contrast .credits-screen h1,
+        body.high-contrast .tutorial-screen h1 {
             color: #fff;
         }
 
-        .intro-screen p, .credits-screen p, .history-screen p {
-            font-size: 1.2em;
+        .intro-screen p,
+        .credits-screen p {
+            font-size: 1.1rem;
             max-width: 600px;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
             text-align: center;
+            line-height: 1.7;
+            font-weight: 400;
         }
 
-        .intro-screen button, .credits-screen button, .tutorial-screen .back-button, .history-screen button {
-            padding: 12px 24px;
-            background-color: #2a9d8f;
-            color: white;
+        .intro-screen button,
+        .credits-screen button,
+        .tutorial-screen .nav-button {
+            padding: 0.75rem 2rem;
+            background: var(--primary);
+            color: #fff;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: var(--transition);
             min-height: 48px;
+            box-shadow: var(--card-shadow);
         }
 
-        .intro-screen button:hover, .credits-screen button:hover, .tutorial-screen .back-button:hover, .history-screen button:hover {
-            background-color: #264653;
+        .intro-screen button:hover,
+        .credits-screen button:hover,
+        .tutorial-screen .nav-button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .tutorial-screen .nav-button.disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .chat-container {
             flex: 1;
-            padding: 20px;
+            padding: 1.5rem;
             overflow-y: auto;
-            background-color: #ffffff;
-            border-radius: 10px;
-            margin: 15px 15px 15px 15px; /* Adjusted margin for consistent spacing */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background: var(--background-light);
+            border-radius: var(--border-radius);
+            margin: 1rem;
+            box-shadow: var(--card-shadow);
         }
 
         body.dark-mode .chat-container {
-            background-color: #2a2a2a;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            background: var(--background-dark);
         }
 
         .message {
-            margin: 15px 0;
-            padding: 12px 18px;
-            border-radius: 10px;
-            max-width: 70%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 1rem 0;
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius);
+            max-width: 80%;
+            box-shadow: var(--card-shadow);
             animation: slideIn 0.3s ease;
+            position: relative;
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .bot-message {
-            background-color: #e9c46a;
-            color: #333;
+            background: var(--secondary);
+            color: var(--text-light);
             align-self: flex-start;
         }
 
         body.dark-mode .bot-message {
-            background-color: #a68a64;
-            color: #e0e0e0;
+            background: var(--secondary-dark);
+            color: var(--text-dark);
         }
 
         .user-message {
-            background-color: #2a9d8f;
-            color: white;
+            background: var(--primary);
+            color: #fff;
             align-self: flex-end;
             margin-left: auto;
         }
 
         body.dark-mode .user-message {
-            background-color: #1a3c34;
+            background: var(--primary-dark);
         }
 
         .message .timestamp {
-            font-size: 0.7em;
-            color: #777;
-            margin-top: 5px;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
             text-align: right;
+            font-weight: 400;
         }
 
         .message .edit-button {
@@ -282,10 +344,11 @@
             border: none;
             color: #fff;
             cursor: pointer;
-            font-size: 0.8em;
-            margin-left: 10px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
             display: none;
             min-height: 48px;
+            transition: var(--transition);
         }
 
         .user-message:hover .edit-button {
@@ -293,172 +356,211 @@
         }
 
         .status-indicator {
-            font-size: 0.8em;
-            padding: 5px 10px;
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 10px;
-            margin-top: 5px;
+            margin-top: 0.5rem;
             display: inline-block;
+            font-weight: 500;
         }
 
         .status-urgent {
-            background-color: #e63946;
-            color: white;
+            background: #b91c1c; /* Dark red */
+            color: #fff;
         }
 
         .status-warning {
-            background-color: #f4a261;
-            color: white;
+            background: #92400e; /* Dark amber */
+            color: #fff;
         }
 
         .status-normal {
-            background-color: #2a9d8f;
-            color: white;
+            background: var(--primary);
+            color: #fff;
         }
 
         .typing-animation {
             display: flex;
-            gap: 5px;
-            padding: 12px 18px;
+            gap: 0.3rem;
+            padding: 1rem 1.25rem;
             align-self: flex-start;
         }
 
-        .typing-animation span {
-            width: 8px;
-            height: 8px;
-            background-color: #2a9d8f;
+        .typing-animation::before {
+            content: '';
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid var(--primary);
+            border-top-color: transparent;
             border-radius: 50%;
-            animation: bounce 0.6s infinite alternate;
+            animation: spin 1s linear infinite;
         }
 
-        body.dark-mode .typing-animation span {
-            background-color: #e0e0e0;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        .typing-animation span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-animation span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
+        body.dark-mode .typing-animation::before {
+            border-color: var(--text-dark);
+            border-top-color: transparent;
         }
 
         .input-container {
-            padding: 20px;
-            background-color: #ffffff;
-            border-top: 1px solid #ddd;
+            padding: 1rem;
+            background: var(--background-light);
+            border-top: 1px solid rgba(0, 0, 0, 0.2);
             display: flex;
-            gap: 10px;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+            gap: 0.5rem;
+            box-shadow: var(--card-shadow);
         }
 
-        body.dark-mode .input [class*="container"] {
-            background-color: #2a2a2a;
-            border-top-color: #444;
+        body.dark-mode .input-container {
+            background: var(--background-dark);
+            border-top-color: rgba(255, 255, 255, 0.2);
         }
 
         .input-container input {
             flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 1.1em;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 25px;
+            font-size: 1rem;
             min-height: 48px;
+            background: var(--background-light);
+            transition: var(--transition);
         }
 
         body.dark-mode .input-container input {
-            background-color: #333;
-            border-color: #555;
-            color: #e0e0e0;
+            background: var(--background-dark);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-dark);
         }
 
         .input-container input:focus {
-            border-color: #2a9d8f;
+            border-color: var(--primary);
             outline: none;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
         }
 
         .input-container button {
-            padding: 12px 24px;
-            background-color: #2a9d8f;
-            color: white;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: #fff;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: var(--transition);
             min-height: 48px;
+            box-shadow: var(--card-shadow);
         }
 
         body.dark-mode .input-container button {
-            background-color: #1a3c34;
+            background: var(--primary-dark);
         }
 
         .input-container button:hover {
-            background-color: #264653;
+            background: var(--primary-dark);
+            transform: scale(1.05);
         }
 
-        .tutorial-screen .container, .history-screen .container {
+        .tutorial-screen .container {
             max-width: 800px;
             width: 100%;
-            padding: 30px;
+            padding: 1.5rem;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
         }
 
-        .tutorial-screen header, .history-screen header {
+        .main-content.full .tutorial-screen .container {
+            margin-left: 0;
+        }
+
+        .tutorial-screen header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
 
-        .tutorial-step, .history-item {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #f0f4f8;
-            border-radius: 8px;
+        .tutorial-step {
+            margin: 1rem 0;
+            padding: 1.5rem;
+            background: var(--background-light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            display: none;
         }
 
-        body.dark-mode .tutorial-step, body.dark-mode .history-item {
-            background-color: #333;
+        .tutorial-step.active {
+            display: block;
         }
 
-        .tutorial-step h2, .history-item h2 {
-            font-size: 1.5em;
-            color: #2a9d8f;
-            margin-bottom: 10px;
+        body.dark-mode .tutorial-step {
+            background: var(--background-dark);
         }
 
-        .tutorial-step p, .history-item p {
-            margin-bottom: 10px;
+        .tutorial-step h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .tutorial-step p {
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+            font-weight: 400;
         }
 
         .toggle-section {
             cursor: pointer;
-            color: #2a9d8f;
-            font-weight: bold;
-            margin-top: 10px;
+            color: var(--primary);
+            font-weight: 500;
+            margin-top: 0.75rem;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 0.3rem;
             min-height: 48px;
+            transition: var(--transition);
+        }
+
+        .toggle-section:hover {
+            color: var(--primary-dark);
         }
 
         .toggle-content {
             display: none;
-            margin-top: 10px;
+            margin-top: 0.75rem;
         }
 
         .toggle-content.active {
             display: block;
         }
 
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .pagination .page-indicator {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .pagination .page-indicator {
+            color: var(--text-dark);
+        }
+
         @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-250px);
+                transform: translateX(-260px);
+                width: 220px;
             }
 
             .sidebar.active {
@@ -473,55 +575,121 @@
                 margin-left: 0;
             }
 
+            .tutorial-screen .container {
+                margin-left: 0;
+            }
+
             .chat-container {
-                margin: 10px;
+                margin: 0.5rem;
+                padding: 1rem;
             }
 
             .message {
-                max-width: 90%;
+                max-width: 85%;
             }
 
-            .intro-screen h1, .credits-screen h1, .tutorial-screen h1, .history-screen h1 {
-                font-size: 1.6em;
+            .intro-screen h1,
+            .credits-screen h1,
+            .tutorial-screen h1 {
+                font-size: 1.6rem;
             }
 
-            .intro-screen p, .credits-screen p, .tutorial-step p, .history-item p {
-                font-size: 1em;
+            .intro-screen p,
+            .credits-screen p,
+            .tutorial-step p {
+                font-size: 0.95rem;
             }
 
-            .tutorial-screen .container, .history-screen .container {
-                padding: 15px;
+            .tutorial-screen .container {
+                padding: 1rem;
             }
 
-            .tutorial-step h2, .history-item h2 {
-                font-size: 1.3em;
+            .tutorial-step h2 {
+                font-size: 1.2rem;
+            }
+
+            .input-container {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+
+            .input-container input,
+            .input-container button {
+                font-size: 0.95rem;
+                padding: 0.6rem;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                transform: translateX(-100%);
+                align-items: center;
+                justify-content: center;
+                background: rgba(5, 150, 105, 0.95); /* Semi-transparent for full-page menu */
+                padding: 2rem;
+            }
+
+            .sidebar.hidden {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar .logo h1 {
+                font-size: 1.8rem;
+                margin-bottom: 2rem;
+            }
+
+            .sidebar nav ul li a,
+            .sidebar nav ul li button {
+                font-size: 1.2rem;
+                padding: 1rem;
+                min-height: 60px;
+                justify-content: center;
+            }
+
+            .sidebar-toggle {
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0.6rem;
+                font-size: 1.1rem;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            .intro-screen h1,
+            .credits-screen h1,
+            .tutorial-screen h1 {
+                font-size: 1.4rem;
+            }
+
+            .intro-screen p,
+            .credits-screen p,
+            .tutorial-step p {
+                font-size: 0.9rem;
             }
 
             .input-container {
                 flex-direction: column;
             }
 
-            .input-container input, .input-container button {
+            .input-container input,
+            .input-container button {
                 width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .sidebar {
-                width: 200px;
+                font-size: 0.9rem;
             }
 
-            .sidebar.hidden {
-                transform: translateX(-200px);
-            }
-
-            .sidebar .logo h1 {
-                font-size: 1.4em;
-            }
-
-            .sidebar nav ul li a, .sidebar nav ul li button {
-                font-size: 1em;
-                padding: 10px;
+            .tutorial-screen .nav-button {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -531,87 +699,95 @@
         <i class="fas fa-bars"></i>
     </button>
 
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar hidden" id="sidebar">
         <div class="logo">
-            <h1>Licenças Ambientais</h1>
+            <h1><i class="fas fa-leaf"></i> Licenças Ambientais</h1>
         </div>
         <nav>
             <ul>
-                <li><a href="#" onclick="clearChat()" aria-label="Limpar histórico do chat"><i class="fas fa-trash"></i> Limpar Chat</a></li>
-                <li><a href="#" onclick="exportFormData()" id="exportButton" style="display: none;" aria-label="Exportar dados da licença"><i class="fas fa-download"></i> Exportar Dados</a></li>
-                <li><a href="#" onclick="showTutorial()" aria-label="Ver tutorial"><i class="fas fa-book"></i> Tutorial</a></li>
-                <li><button onclick="toggleDarkMode()" aria-label="Alternar modo escuro"><i class="fas fa-moon"></i> Modo Escuro</button></li>
-                <li><a href="#" onclick="showCredits()" aria-label="Ver créditos"><i class="fas fa-info-circle"></i> Créditos</a></li>
+                <li><a href="#" onclick="clearChat(); toggleSidebar()" aria-label="Limpar histórico do chat"><i class="fas fa-trash-alt"></i> Limpar Chat</a></li>
+                <li><a href="#" onclick="exportFormData(); toggleSidebar()" id="exportButton" style="display: none;" aria-label="Exportar dados da licença"><i class="fas fa-file-download"></i> Exportar Dados</a></li>
+                <li><a href="#" onclick="showTutorial(); toggleSidebar()" aria-label="Ver tutorial"><i class="fas fa-book-open"></i> Tutorial</a></li>
+                <li><button onclick="toggleDarkMode(); toggleSidebar()" aria-label="Alternar modo escuro"><i class="fas fa-moon"></i> Modo Escuro</button></li>
+                <li><a href="#" onclick="showCredits(); toggleSidebar()" aria-label="Ver créditos"><i class="fas fa-info-circle"></i> Créditos</a></li>
             </ul>
         </nav>
     </div>
 
-    <div class="main-content" id="mainContent">
+    <div class="main-content full" id="mainContent">
         <div class="intro-screen" id="introScreen" role="dialog" aria-labelledby="introTitle">
-            <h1 id="introTitle">Bem-vindo ao Gerenciamento de Licenças</h1>
-            <p>Registre e acompanhe licenças ambientais de forma simples e interativa. Comece agora!</p>
-            <button onclick="enterChat()" aria-label="Entrar no chat">Iniciar Chat</button>
+            <h1 id="introTitle"><i class="fas fa-leaf"></i> Gerenciamento de Licenças</h1>
+            <p>Registre e acompanhe licenças ambientais de forma simples, moderna e interativa. Comece agora!</p>
+            <button onclick="enterChat()" aria-label="Entrar no chat"><i class="fas fa-comment-alt"></i> Iniciar Chat</button>
         </div>
 
         <div class="credits-screen hidden" id="creditsScreen" role="dialog" aria-labelledby="creditsTitle">
-            <h1 id="creditsTitle">Créditos</h1>
+            <h1 id="creditsTitle"><i class="fas fa-info-circle"></i> Créditos</h1>
             <p>Desenvolvido por:<br>
-               <a href="https://luann8.github.io/Links-Personal/" style="color: #e9c46a;">Luann Pereira Mendes</a><br>
-               <a href="https://linktr.ee/Kayostavares" style="color: #e9c46a;">Kayo Tavares</a></p>
-            <p>Local: Brasil - Vassouras - RJ</p>
-            <button onclick="backToIntro()" aria-label="Voltar para a tela inicial">Voltar</button>
+               <a href="https://luann8.github.io/Links-Personal/" style="color: var(--secondary);">Luann Pereira Mendes</a><br>
+               <a href="https://linktr.ee/Kayostavares" style="color: var(--secondary);">Kayo Tavares</a></p>
+            <p><i class="fas fa-map-marker-alt"></i> Brasil - Vassouras - RJ</p>
+            <button onclick="backToIntro()" aria-label="Voltar para a tela inicial"><i class="fas fa-arrow-left"></i> Voltar</button>
         </div>
 
         <div class="tutorial-screen hidden" id="tutorialScreen" role="dialog" aria-labelledby="tutorialTitle">
             <div class="container">
                 <header>
-                    <h1 id="tutorialTitle">Tutorial: Gerenciamento de Licenças Ambientais</h1>
-                    <button class="back-button" onclick="backToMain()" aria-label="Voltar para o aplicativo"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <h1 id="tutorialTitle"><i class="fas fa-book-open"></i> Tutorial</h1>
                 </header>
 
-                <section class="tutorial-step">
-                    <h2>1. Iniciar o Chat</h2>
-                    <p>Na tela inicial, clique no botão "Iniciar Chat" para começar a interagir com o sistema.</p>
+                <section class="tutorial-step active" id="step-1">
+                    <h2>1. Acessar o Chat</h2>
+                    <p>Na tela inicial, clique no botão "<i class="fas fa-comment-alt"></i> Iniciar Chat" para abrir a interface de conversa e começar a interagir com o sistema.</p>
                 </section>
 
-                <section class="tutorial-step">
+                <section class="tutorial-step" id="step-2">
                     <h2>2. Registrar uma Licença</h2>
-                    <p>Digite "iniciar" no campo de entrada para começar o processo de registro. O sistema irá solicitar:</p>
+                    <p>No chat, digite "<strong>iniciar</strong>" para começar o registro de uma licença ambiental. O sistema solicitará as seguintes informações:</p>
                     <ul>
-                        <li>E-mail</li>
-                        <li>Número da licença</li>
-                        <li>Nome da licença</li>
-                        <li>Nome do cliente</li>
-                        <li>Local da licença</li>
-                        <li>Data de "Protocolar até" (YYYY-MM-DD)</li>
-                        <li>Data de vencimento (YYYY-MM-DD)</li>
+                        <li><i class="fas fa-envelope"></i> Seu e-mail (ex.: exemplo@dominio.com)</li>
+                        <li><i class="fas fa-hashtag"></i> Número da licença</li>
+                        <li><i class="fas fa-tag"></i> Nome da licença</li>
+                        <li><i class="fas fa-user"></i> Nome do cliente</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Local da licença</li>
+                        <li><i class="fas fa-calendar-alt"></i> Data de "Protocolar até" (formato: AAAA-MM-DD, ex.: 2025-03-25)</li>
+                        <li><i class="fas fa-calendar-times"></i> Data de vencimento (formato: AAAA-MM-DD, ex.: 2025-04-01)</li>
                     </ul>
+                    <p>Responda a cada pergunta no chat para completar o registro.</p>
                 </section>
 
-                <section class="tutorial-step">
-                    <h2>3. Adicionar ao Google Calendar</h2>
-                    <p>Após registrar a licença, você receberá um link para adicionar um lembrete ao Google Calendar. Clique no link para abrir o calendário.</p>
+                <section class="tutorial-step" id="step-3">
+                    <h2>3. Adicionar Lembrete ao Google Calendar</h2>
+                    <p>Após registrar a licença, o sistema fornecerá um link para adicionar um lembrete ao Google Calendar. Clique no link para criar um evento com os detalhes da licença.</p>
                 </section>
 
-                <section class="tutorial-step">
-                    <h2>4. Exportar Dados</h2>
-                    <p>Depois de registrar uma licença, clique em "Exportar Dados" no menu lateral para baixar os dados como um arquivo JSON.</p>
+                <section class="tutorial-step" id="step-4">
+                    <h2>4. Exportar Dados da Licença</h2>
+                    <p>Quando uma licença for registrada, a opção "<i class="fas fa-file-download"></i> Exportar Dados" aparecerá na barra lateral. Clique nela para baixar os dados da licença em formato JSON.</p>
                 </section>
 
-                <section class="tutorial-step">
-                    <h2>5. Outras Funcionalidades</h2>
-                    <p>Explore outras opções no menu lateral:</p>
+                <section class="tutorial-step" id="step-5">
+                    <h2>5. Usar a Barra Lateral</h2>
+                    <p>A barra lateral contém as seguintes funcionalidades:</p>
                     <ul>
-                        <li><strong>Limpar Chat:</strong> Apaga o histórico do chat.</li>
-                        <li><strong>Modo Escuro:</strong> Alterna entre temas claro e escuro.</li>
-                        <li><strong>Créditos:</strong> Veja informações sobre os desenvolvedores.</li>
+                        <li><i class="fas fa-trash-alt"></i> <strong>Limpar Chat:</strong> Apaga todas as mensagens do chat e reinicia o processo.</li>
+                        <li><i class="fas fa-file-download"></i> <strong>Exportar Dados:</strong> Baixa os dados da licença registrada (aparece após o registro).</li>
+                        <li><i class="fas fa-book-open"></i> <strong>Tutorial:</strong> Abre este guia para aprender a usar o sistema.</li>
+                        <li><i class="fas fa-moon"></i> <strong>Modo Escuro:</strong> Alterna entre os temas claro e escuro para melhor visualização.</li>
+                        <li><i class="fas fa-info-circle"></i> <strong>Créditos:</strong> Exibe informações sobre os desenvolvedores do sistema.</li>
                     </ul>
-                    <div class="toggle-section" onclick="toggleSection(this)">Mais detalhes <i class="fas fa-chevron-down"></i></div>
+                    <div class="toggle-section" onclick="toggleSection(this)">Dicas adicionais <i class="fas fa-chevron-down"></i></div>
                     <div class="toggle-content">
-                        <p>Você também pode editar mensagens enviadas clicando no ícone de lápis ao lado de suas mensagens.</p>
-                        <p>Use a barra lateral para navegar rapidamente entre as funcionalidades.</p>
+                        <p>Para editar uma mensagem enviada, passe o mouse sobre sua mensagem no chat e clique no ícone <i class="fas fa-edit"></i>.</p>
+                        <p>Use o botão de menu <i class="fas fa-bars"></i> no canto superior direito em dispositivos móveis para abrir a barra lateral.</p>
                     </div>
                 </section>
+
+                <div class="pagination">
+                    <button class="nav-button" onclick="prevStep()" aria-label="Página anterior"><i class="fas fa-arrow-left"></i> Anterior</button>
+                    <span class="page-indicator" id="pageIndicator">1/5</span>
+                    <button class="nav-button" onclick="nextStep()" aria-label="Próxima página"><i class="fas fa-arrow-right"></i> Próximo</button>
+                </div>
             </div>
         </div>
 
@@ -621,7 +797,7 @@
 
         <div class="input-container" id="inputContainer" style="display: none;" role="form">
             <input type="text" id="userInput" placeholder="Digite sua mensagem..." aria-label="Campo de entrada de mensagem">
-            <button onclick="sendMessage()" aria-label="Enviar mensagem">Enviar</button>
+            <button onclick="sendMessage()" aria-label="Enviar mensagem"><i class="fas fa-paper-plane"></i> Enviar</button>
         </div>
     </div>
 
@@ -635,9 +811,12 @@
         const inputContainer = document.getElementById('inputContainer');
         const userInput = document.getElementById('userInput');
         const exportButton = document.getElementById('exportButton');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
         let step = 0;
         let formData = {};
         let messages = [];
+        let currentTutorialStep = 1;
+        const totalTutorialSteps = 5;
 
         function formatTimestamp() {
             const now = new Date();
@@ -695,7 +874,6 @@
         function showTypingAnimation() {
             const typing = document.createElement('div');
             typing.classList.add('typing-animation');
-            typing.innerHTML = '<span></span><span></span><span></span>';
             typing.id = 'typingAnimation';
             chat.appendChild(typing);
             chat.scrollTop = chat.scrollHeight;
@@ -707,7 +885,7 @@
         }
 
         function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@y]+$/;
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
         }
 
@@ -722,6 +900,7 @@
             sidebar.classList.toggle('active');
             sidebar.classList.toggle('hidden');
             mainContent.classList.toggle('full');
+            sidebarToggle.classList.toggle('active');
         }
 
         function enterChat() {
@@ -744,6 +923,7 @@
             chat.style.display = 'none';
             inputContainer.style.display = 'none';
             tutorialScreen.classList.remove('hidden');
+            updateTutorialStep(1);
         }
 
         function backToIntro() {
@@ -806,6 +986,35 @@
             element.querySelector('i').classList.toggle('fa-chevron-up');
         }
 
+        function updateTutorialStep(step) {
+            currentTutorialStep = Math.max(1, Math.min(step, totalTutorialSteps));
+            document.querySelectorAll('.tutorial-step').forEach((el, index) => {
+                el.classList.toggle('active', index + 1 === currentTutorialStep);
+            });
+            document.getElementById('pageIndicator').textContent = `${currentTutorialStep}/${totalTutorialSteps}`;
+            document.querySelector('.nav-button[onclick="prevStep()"]').classList.toggle('disabled', currentTutorialStep === 1);
+            document.querySelector('.nav-button[onclick="nextStep()"]').classList.toggle('disabled', currentTutorialStep === totalTutorialSteps);
+            if (currentTutorialStep === totalTutorialSteps) {
+                document.querySelector('.nav-button[onclick="nextStep()"]').textContent = 'Concluir';
+                document.querySelector('.nav-button[onclick="nextStep()"]').onclick = backToMain;
+            } else {
+                document.querySelector('.nav-button[onclick="nextStep()"]').textContent = 'Próximo';
+                document.querySelector('.nav-button[onclick="nextStep()"]').onclick = nextStep;
+            }
+        }
+
+        function prevStep() {
+            if (currentTutorialStep > 1) {
+                updateTutorialStep(currentTutorialStep - 1);
+            }
+        }
+
+        function nextStep() {
+            if (currentTutorialStep < totalTutorialSteps) {
+                updateTutorialStep(currentTutorialStep + 1);
+            }
+        }
+
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
             document.querySelector('.sidebar button[aria-label="Alternar modo escuro"]').innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
@@ -854,21 +1063,21 @@
                 formData.local = input;
                 step = 6;
                 hideTypingAnimation();
-                addMessage('Qual é a data de "Protocolar até"? (Formato: YYYY-MM-DD, ex.: 2025-03-25)');
+                addMessage('Qual é a data de "Protocolar até"? (Formato: AAAA-MM-DD, ex.: 2025-03-25)');
             } else if (step === 6) {
                 if (!validateDate(input)) {
                     hideTypingAnimation();
-                    addMessage('Por favor, insira uma data válida no formato YYYY-MM-DD (ex.: 2025-03-25).');
+                    addMessage('Por favor, insira uma data válida no formato AAAA-MM-DD (ex.: 2025-03-25).');
                     return;
                 }
                 formData.protocolarAte = input;
                 step = 7;
                 hideTypingAnimation();
-                addMessage('Qual é a data de vencimento? (Formato: YYYY-MM-DD, ex.: 2025-04-01)');
+                addMessage('Qual é a data de vencimento? (Formato: AAAA-MM-DD, ex.: 2025-04-01)');
             } else if (step === 7) {
                 if (!validateDate(input)) {
                     hideTypingAnimation();
-                    addMessage('Por favor, insira uma data válida no formato YYYY-MM-DD (ex.: 2025-04-01).');
+                    addMessage('Por favor, insira uma data válida no formato AAAA-MM-DD (ex.: 2025-04-01).');
                     return;
                 }
                 formData.vencimento = input;
@@ -925,6 +1134,8 @@
                     backToIntro();
                 } else if (!introScreen.classList.contains('hidden')) {
                     showCredits();
+                } else if (sidebar.classList.contains('active')) {
+                    toggleSidebar();
                 }
             }
         });
